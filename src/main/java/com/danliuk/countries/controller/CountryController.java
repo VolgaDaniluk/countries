@@ -2,6 +2,7 @@ package com.danliuk.countries.controller;
 
 import com.danliuk.countries.dto.request.CountryRequestDto;
 import com.danliuk.countries.dto.response.CountryResponseDto;
+import com.danliuk.countries.repository.specificaton.SearchCriteria;
 import com.danliuk.countries.service.CountryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class CountryController {
 
     private final CountryService countryService;
+
+    @PostMapping("/filtered")
+    public List<CountryResponseDto> findByFilter(@RequestBody List<SearchCriteria> filters) {
+        return countryService.findByFilter(filters);
+    }
 
     @GetMapping
     public List<CountryResponseDto> getAll() {

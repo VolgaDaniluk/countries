@@ -7,22 +7,38 @@ import com.danliuk.countries.exception.ItemNotFoundException;
 import com.danliuk.countries.mapper.CountryMapper;
 import com.danliuk.countries.model.Country;
 import com.danliuk.countries.repository.CountryRepository;
-import jakarta.transaction.Transactional;
+import com.danliuk.countries.repository.specificaton.CountrySpecification;
+import com.danliuk.countries.repository.specificaton.SearchCriteria;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class CountryService {
 
     private final CountryRepository countryRepository;
+    private final CountrySpecification countrySpecification;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<CountryResponseDto> getAll() {
-        return countryRepository.findAll().stream()
+        return countryRepository.findAll()
+                .stream()
                 .map(CountryMapper.COUNTRY_MAPPER::toResponseDto)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CountryResponseDto> findByFilter(List<SearchCriteria> criteriaList) {
+        Specification<Country> specification = countrySpecification.build(criteriaList);
+
+        return countryRepository.findAll(specification)
+                .stream()
+                .map(CountryMapper.COUNTRY_MAPPER::toResponseDto)
+                .toList();
+
     }
 
     @Transactional
