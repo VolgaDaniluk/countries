@@ -11,10 +11,12 @@ import com.danliuk.countries.repository.specificaton.CountrySpecification;
 import com.danliuk.countries.repository.specificaton.SearchCriteria;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CountryService {
@@ -32,6 +34,7 @@ public class CountryService {
 
     @Transactional(readOnly = true)
     public List<CountryResponseDto> findByFilter(List<SearchCriteria> criteriaList) {
+        log.info("Getting countries with filtration");
         Specification<Country> specification = countrySpecification.build(criteriaList);
 
         return countryRepository.findAll(specification)
@@ -43,6 +46,7 @@ public class CountryService {
 
     @Transactional
     public CountryResponseDto create(CountryRequestDto dto) {
+        log.info("Create country {}", dto);
         Country country = CountryMapper.COUNTRY_MAPPER.toModel(dto);
         Country saved = countryRepository.save(country);
         return CountryMapper.COUNTRY_MAPPER.toResponseDto(saved);
@@ -50,6 +54,7 @@ public class CountryService {
 
     @Transactional
     public CountryResponseDto update(CountryRequestDto dto, Long id) {
+        log.info("Create country with id {}. {}", id, dto);
         Country country = countryRepository.findById(id)
                 .orElseThrow(() -> new ItemNotFoundException("Country wasn't found with id " + id));
 
@@ -61,6 +66,7 @@ public class CountryService {
 
     @Transactional
     public void delete(Long id) {
+        log.info("Delete country with id {}", id);
         countryRepository.deleteById(id);
     }
 }

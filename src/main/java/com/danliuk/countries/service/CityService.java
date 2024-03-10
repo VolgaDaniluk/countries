@@ -10,10 +10,12 @@ import com.danliuk.countries.repository.specificaton.CitySpecification;
 import com.danliuk.countries.repository.specificaton.SearchCriteria;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CityService {
@@ -30,6 +32,7 @@ public class CityService {
 
     @Transactional(readOnly = true)
     public List<CityResponseDto> findByFilter(List<SearchCriteria> criteriaList) {
+        log.info("Getting cities with filtration");
         Specification<City> specification = citySpecification.build(criteriaList);
 
         return cityRepository.findAll(specification)
@@ -41,6 +44,7 @@ public class CityService {
 
     @Transactional
     public CityResponseDto create(CityRequestDto dto) {
+        log.info("Create city {}", dto);
         City city = CityMapper.CITY_MAPPER.toModel(dto);
         City saved = cityRepository.save(city);
         return CityMapper.CITY_MAPPER.toResponseDto(saved);
@@ -48,6 +52,7 @@ public class CityService {
 
     @Transactional
     public CityResponseDto update(CityRequestDto dto, Long id) {
+        log.info("Create city with id {}. {}", id, dto);
         City city = cityRepository.findById(id)
                 .orElseThrow(() -> new ItemNotFoundException("City wasn't found with id " + id));
 
@@ -58,6 +63,7 @@ public class CityService {
 
     @Transactional
     public void delete(Long id) {
+        log.info("Delete city with id {}", id);
         cityRepository.deleteById(id);
     }
 }
