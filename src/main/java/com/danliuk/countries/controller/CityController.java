@@ -2,6 +2,7 @@ package com.danliuk.countries.controller;
 
 import com.danliuk.countries.dto.request.CityRequestDto;
 import com.danliuk.countries.dto.response.CityResponseDto;
+import com.danliuk.countries.repository.specificaton.SearchCriteria;
 import com.danliuk.countries.service.CityService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class CityController {
 
     private final CityService cityService;
+
+    @PostMapping("/filtered")
+    public List<CityResponseDto> findByFilter(@RequestBody List<SearchCriteria> filters) {
+        return cityService.findByFilter(filters);
+    }
 
     @GetMapping
     public List<CityResponseDto> getAll() {
